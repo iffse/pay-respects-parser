@@ -1,4 +1,4 @@
-// pay-respects-parser: Rule parser for pay-respects
+// pay-respects-parser: Compile time rule parser for pay-respects
 // Copyright (C) 2023 iff
 
 // This program is free software: you can redistribute it and/or modify

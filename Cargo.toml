@@ -4,7 +4,7 @@ version = "0.2.2"
 edition = "2021"
 
 # for crates.io
-description = "Rule parser for pay-respects"
+description = "Compile time rule parser for pay-respects"
 repository = "https://github.com/iffse/pay-respects-parser"
 license = "AGPL-3.0"
 include = [
