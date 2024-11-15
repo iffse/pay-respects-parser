@@ -97,7 +97,7 @@ pub fn command(suggest: &mut String, replace_list: &mut Vec<TokenStream2>) {
 			let mut start_string = start.to_string();
 			let start = start.parse::<i32>().unwrap_or(0);
 			if start < 0 {
-				start_string = format!("split_command.len() - {}", start);
+				start_string = format!("split_command.len() {}", start);
 			};
 			let end_string;
 			let parsed_end = end.parse::<i32>();
@@ -106,7 +106,7 @@ pub fn command(suggest: &mut String, replace_list: &mut Vec<TokenStream2>) {
 			} else {
 				let end = parsed_end.clone().unwrap();
 				if end < 0 {
-					end_string = format!("split_command.len() - {}", end + 1);
+					end_string = format!("split_command.len() {}", end + 1);
 				} else {
 					end_string = (end + 1).to_string();
 				}
@@ -118,7 +118,11 @@ pub fn command(suggest: &mut String, replace_list: &mut Vec<TokenStream2>) {
 			suggest.replace_range(placeholder, &tag(tag_name, replace_tag));
 		} else {
 			let range = range.parse::<i32>().unwrap_or(0);
-			let command = format!("split_command[{}]", range);
+			let command = if range < 0 {
+				format!("split_command[std::cmp::max(split_command.len() {}, 0)]", range)
+			} else {
+				format!("split_command[{}]", range)
+			};
 
 			replace_list.push(rtag(tag_name, replace_tag, command));
 			suggest.replace_range(placeholder, &tag(tag_name, replace_tag));
@@ -143,7 +147,7 @@ pub fn typo(suggest: &mut String, replace_list: &mut Vec<TokenStream2>) {
 				let command_index = command_index.parse::<i32>().unwrap();
 
 				let index = if command_index < 0 {
-					format!("split_command.len() - {}", command_index)
+					format!("split_command.len() {}", command_index)
 				} else {
 					command_index.to_string()
 				};
@@ -152,7 +156,7 @@ pub fn typo(suggest: &mut String, replace_list: &mut Vec<TokenStream2>) {
 				let (start, end) = command_index.split_once(':').unwrap();
 				let start = start.parse::<i32>().unwrap_or(0);
 				let start_string = if start < 0 {
-					format!("split_command.len() - {}", start)
+					format!("split_command.len() {}", start)
 				} else {
 					start.to_string()
 				};
@@ -162,7 +166,7 @@ pub fn typo(suggest: &mut String, replace_list: &mut Vec<TokenStream2>) {
 				} else {
 					let end = end.unwrap();
 					if end < 0 {
-						format!("split_command.len() - {}", end + 1)
+						format!("split_command.len() {}", end + 1)
 					} else {
 						(end + 1).to_string()
 					}
