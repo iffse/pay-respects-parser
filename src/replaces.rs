@@ -119,7 +119,10 @@ pub fn command(suggest: &mut String, replace_list: &mut Vec<TokenStream2>) {
 		} else {
 			let range = range.parse::<i32>().unwrap_or(0);
 			let command = if range < 0 {
-				format!("split_command[std::cmp::max(split_command.len() {}, 0)]", range)
+				format!(
+					"split_command[std::cmp::max(split_command.len() {}, 0)]",
+					range
+				)
 			} else {
 				format!("split_command[{}]", range)
 			};
@@ -211,10 +214,6 @@ pub fn typo(suggest: &mut String, replace_list: &mut Vec<TokenStream2>) {
 				string_index, function
 			);
 		} else {
-			let match_list = match_list
-				.iter()
-				.map(|s| s.trim().to_string())
-				.collect::<Vec<String>>();
 			let string_match_list = match_list.join("\".to_string(), \"");
 			let string_match_list = format!("\"{}\".to_string()", string_match_list);
 			command = format!(
