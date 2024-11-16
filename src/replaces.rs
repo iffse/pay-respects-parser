@@ -2,14 +2,11 @@ use proc_macro2::TokenStream as TokenStream2;
 use quote::quote;
 
 fn rtag(name: &str, x: i32, y: String) -> TokenStream2 {
-	let tag = format!("{}{} = {}", name, x, y);
-	let tag: TokenStream2 = tag.parse().unwrap();
-	tag
+	format!("{}{} = {}", name, x, y).parse().unwrap()
 }
 
 fn tag(name: &str, x: i32) -> String {
-	let tag = format!("{{{}{}}}", name, x);
-	tag
+	format!("{{{}{}}}", name, x)
 }
 
 fn eval_placeholder(
