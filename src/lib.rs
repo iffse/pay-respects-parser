@@ -191,6 +191,7 @@ fn eval_condition(condition: &str, arg: &str) -> TokenStream2 {
 		"min_length" => quote! {(split_command.len() >= #arg.parse::<usize>().unwrap())},
 		"length" => quote! {(split_command.len() == #arg.parse::<usize>().unwrap())},
 		"max_length" => quote! {(split_command.len() <= #arg.parse::<usize>().unwrap() + 1)},
+		"shell" => quote! {(shell == #arg)},
 		_ => unreachable!("Unknown condition when evaluation condition: {}", condition),
 	}
 }

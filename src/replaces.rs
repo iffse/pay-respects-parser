@@ -177,8 +177,7 @@ pub fn typo(suggest: &mut String, replace_list: &mut Vec<TokenStream2>) {
 		} else {
 			unreachable!("Typo suggestion must have a command index");
 		};
-		let match_list;
-		if suggest.contains('(') {
+		let match_list = if suggest.contains('(') {
 			let split = suggest[args.to_owned()]
 				.split_once("(")
 				.unwrap()
@@ -186,18 +185,17 @@ pub fn typo(suggest: &mut String, replace_list: &mut Vec<TokenStream2>) {
 				.rsplit_once(")")
 				.unwrap()
 				.0;
-			match_list = split.split(',').collect::<Vec<&str>>();
+			split.split(',').collect::<Vec<&str>>()
 		} else {
 			unreachable!("Typo suggestion must have a match list");
-		}
+		};
 
 		let match_list = match_list
 			.iter()
 			.map(|s| s.trim().to_string())
 			.collect::<Vec<String>>();
 
-		let command;
-		if match_list[0].starts_with("eval_shell_command(") {
+		let command = if match_list[0].starts_with("eval_shell_command(") {
 			let function = match_list.join(",");
 			// add a " after first comma, and a " before last )
 			let function = format!(
@@ -206,18 +204,18 @@ pub fn typo(suggest: &mut String, replace_list: &mut Vec<TokenStream2>) {
 				&function[function.find(',').unwrap() + 1..function.len() - 1],
 				"\")"
 			);
-			command = format!(
+			format!(
 				"suggest_typo(&split_command[{}], {})",
 				string_index, function
-			);
+			)
 		} else {
 			let string_match_list = match_list.join("\".to_string(), \"");
 			let string_match_list = format!("\"{}\".to_string()", string_match_list);
-			command = format!(
+			format!(
 				"suggest_typo(&split_command[{}], vec![{}])",
 				string_index, string_match_list
-			);
-		}
+			)
+		};
 
 		replace_list.push(rtag(tag_name, replace_tag, command));
 		suggest.replace_range(placeholder, &tag(tag_name, replace_tag));
