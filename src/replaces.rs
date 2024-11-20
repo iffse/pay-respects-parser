@@ -47,6 +47,12 @@ pub fn opts(
 		suggest.replace_range(placeholder, &current_tag);
 		replace_tag += 1;
 	}
+	if replace_tag > 0 {
+		let split = quote! {
+			let split = split_command(&last_command);
+		};
+		opt_list.push(split);
+	}
 }
 
 pub fn cmd_reg(suggest: &mut String, replace_list: &mut Vec<TokenStream2>) {
@@ -94,22 +100,22 @@ pub fn command(suggest: &mut String, replace_list: &mut Vec<TokenStream2>) {
 			let mut start_string = start.to_string();
 			let start = start.parse::<i32>().unwrap_or(0);
 			if start < 0 {
-				start_string = format!("split_command.len() {}", start);
+				start_string = format!("split.len() {}", start);
 			};
 			let end_string;
 			let parsed_end = end.parse::<i32>();
 			if parsed_end.is_err() {
-				end_string = String::from("split_command.len()");
+				end_string = String::from("split.len()");
 			} else {
 				let end = parsed_end.clone().unwrap();
 				if end < 0 {
-					end_string = format!("split_command.len() {}", end + 1);
+					end_string = format!("split.len() {}", end + 1);
 				} else {
 					end_string = (end + 1).to_string();
 				}
 			};
 
-			let command = format! {r#"split_command[{}..{}].join(" ")"#, start_string, end_string};
+			let command = format! {r#"split[{}..{}].join(" ")"#, start_string, end_string};
 
 			replace_list.push(rtag(tag_name, replace_tag, command));
 			suggest.replace_range(placeholder, &tag(tag_name, replace_tag));
@@ -117,11 +123,11 @@ pub fn command(suggest: &mut String, replace_list: &mut Vec<TokenStream2>) {
 			let range = range.parse::<i32>().unwrap_or(0);
 			let command = if range < 0 {
 				format!(
-					"split_command[std::cmp::max(split_command.len() {}, 0)]",
+					"split[std::cmp::max(split.len() {}, 0)]",
 					range
 				)
 			} else {
-				format!("split_command[{}]", range)
+				format!("split[{}]", range)
 			};
 
 			replace_list.push(rtag(tag_name, replace_tag, command));
@@ -147,7 +153,7 @@ pub fn typo(suggest: &mut String, replace_list: &mut Vec<TokenStream2>) {
 				let command_index = command_index.parse::<i32>().unwrap();
 
 				let index = if command_index < 0 {
-					format!("split_command.len() {}", command_index)
+					format!("split.len() {}", command_index)
 				} else {
 					command_index.to_string()
 				};
@@ -156,17 +162,17 @@ pub fn typo(suggest: &mut String, replace_list: &mut Vec<TokenStream2>) {
 				let (start, end) = command_index.split_once(':').unwrap();
 				let start = start.parse::<i32>().unwrap_or(0);
 				let start_string = if start < 0 {
-					format!("split_command.len() {}", start)
+					format!("split.len() {}", start)
 				} else {
 					start.to_string()
 				};
 				let end = end.parse::<i32>();
 				let end_string = if end.is_err() {
-					String::from("split_command.len()")
+					String::from("split.len()")
 				} else {
 					let end = end.unwrap();
 					if end < 0 {
-						format!("split_command.len() {}", end + 1)
+						format!("split.len() {}", end + 1)
 					} else {
 						(end + 1).to_string()
 					}
@@ -205,14 +211,14 @@ pub fn typo(suggest: &mut String, replace_list: &mut Vec<TokenStream2>) {
 				"\")"
 			);
 			format!(
-				"suggest_typo(&split_command[{}], {})",
+				"suggest_typo(&split[{}], {})",
 				string_index, function
 			)
 		} else {
 			let string_match_list = match_list.join("\".to_string(), \"");
 			let string_match_list = format!("\"{}\".to_string()", string_match_list);
 			format!(
-				"suggest_typo(&split_command[{}], vec![{}])",
+				"suggest_typo(&split[{}], vec![{}])",
 				string_index, string_match_list
 			)
 		};
