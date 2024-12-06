@@ -122,10 +122,7 @@ pub fn command(suggest: &mut String, replace_list: &mut Vec<TokenStream2>) {
 		} else {
 			let range = range.parse::<i32>().unwrap_or(0);
 			let command = if range < 0 {
-				format!(
-					"split[std::cmp::max(split.len() {}, 0)]",
-					range
-				)
+				format!("split[std::cmp::max(split.len() {}, 0)]", range)
 			} else {
 				format!("split[{}]", range)
 			};
@@ -210,10 +207,7 @@ pub fn typo(suggest: &mut String, replace_list: &mut Vec<TokenStream2>) {
 				&function[function.find(',').unwrap() + 1..function.len() - 1],
 				"\")"
 			);
-			format!(
-				"suggest_typo(&split[{}], {})",
-				string_index, function
-			)
+			format!("suggest_typo(&split[{}], {})", string_index, function)
 		} else {
 			let string_match_list = match_list.join("\".to_string(), \"");
 			let string_match_list = format!("\"{}\".to_string()", string_match_list);

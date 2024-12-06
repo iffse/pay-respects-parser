@@ -130,10 +130,9 @@ fn gen_match_rules(rules: Vec<Rule>) -> TokenStream {
 			#(
 			#command => {
 				#matches_tokens
-				return None;
 				}
 				)*
-				_ => { return None; }
+				_ => {}
 		};
 	}
 	.into()
@@ -216,6 +215,6 @@ fn eval_suggest(suggest: &str) -> TokenStream2 {
 
 	quote! {
 		#(#opt_list)*
-		return Some(format!{#suggest, #(#replace_list),*});
+		data.add_candidate(&format!{#suggest, #(#replace_list),*});
 	}
 }
