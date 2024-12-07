@@ -207,12 +207,12 @@ pub fn typo(suggest: &mut String, replace_list: &mut Vec<TokenStream2>) {
 				&function[function.find(',').unwrap() + 1..function.len() - 1],
 				"\")"
 			);
-			format!("suggest_typo(&split[{}], {})", string_index, function)
+			format!("suggest_typo(&split[{}], {}, executables)", string_index, function)
 		} else {
 			let string_match_list = match_list.join("\".to_string(), \"");
 			let string_match_list = format!("\"{}\".to_string()", string_match_list);
 			format!(
-				"suggest_typo(&split[{}], vec![{}])",
+				"suggest_typo(&split[{}], vec![{}], executables)",
 				string_index, string_match_list
 			)
 		};

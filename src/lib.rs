@@ -184,7 +184,7 @@ fn parse_conditions(suggest: &str) -> (String, Vec<TokenStream2>) {
 
 fn eval_condition(condition: &str, arg: &str) -> TokenStream2 {
 	match condition {
-		"executable" => quote! {check_executable(shell, #arg)},
+		"executable" => quote! {data.has_executable(#arg)},
 		"err_contains" => quote! {error_msg.contains(#arg)},
 		"cmd_contains" => quote! {last_command.contains(#arg)},
 		"min_length" => quote! {(split.len() >= #arg.parse::<usize>().unwrap())},
